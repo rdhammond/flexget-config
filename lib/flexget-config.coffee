@@ -1,15 +1,40 @@
-q = require 'q'
+Q = require 'q'
+fs = require 'fs'
+_ = require 'underscore'
+yaml = require 'js-yaml'
 
 class flexgetConfig
 	constructor: (@path) ->
+
+	fetchConfig: ->
+		contents = fs.readFileSync @path
+		yaml.safeRead contents
+	
+	saveConfig: (config) ->
+		contents = yaml.safeDump config, {schema: yaml.FAILSAFE_SCHEMA}
+		Q.nfcall fs.writeFile, @path, contents
 	
 	getAll: ->
-		# TODO
+		config = fetchConfig()
+		_.map config.tasks.download_tv.series, (v,k) -> k
 		
 	add: (name) ->
-		# TODO
+		config = @fetchConfig()
+		
+		if _.has config.tasks.download_tv.series, name
+			return
+			
+		config.tasks.download_tv.series[name] = newShow name
+		@saveConfig config
 		
 	delete: (id) ->
-		# TODO
+		config = @fetchConfig()
+		
+		if not _.has config.tasks.download_tv.series, id
+			return
+			
+		delete config.tasks.download_tv.series[id]
+		@saveConfig config
 	
+
 module.exports = flexgetConfig
