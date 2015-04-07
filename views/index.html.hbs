@@ -7,10 +7,16 @@
 	
 	<body>
 		<form id='frmAdd' method='POST' action='/add'>
-			<label for='txtShowName'>Show Name:</label><br />
-			<input id='txtShowName' type='text' />
+			<label for='txtShowName'><strong>Show Name:</strong></label>
+			<input id='txtShowName' type='text' /><br /><br />
+			<p><strong>Start from</strong></p>
+			<label for='txtSeason'>Season:</label>
+			<input id='txtSeason' type='text' maxlength='2' />
+			<label for='txtEpisode'>Episode:</label>
+			<input id='txtEpisode' type='text' maxlength='2' /><br /><br />
 			<button id='btnAdd' type='submit'>Add</button><br />
-			<p><strong>TIP:</strong> Look up the show on <a href='http://torrentz.eu'>torrentz</a> first and get this as close as possible to avoid unexpected surprises. (Replace any punctuation with white space.)</p>
+			<p><strong>TIP:</strong> Look up the show on <a href='http://torrentz.eu'>torrentz</a> first and get the name as close as possible to avoid unexpected surprises. (Replace any punctuation with white space.)</p>
+			<p id='pInvalid'>One or more values are missing or invalid.</p>
 		</form>
 		
 		{{> existing}}
