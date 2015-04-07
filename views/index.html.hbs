@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang='en'>
+	<head>
+		<title>Flexget Config</title>
+		<link rel='stylesheet' href='/css/index.css' />
+	</head>
+	
+	<body>
+		<form id='frmAdd' method='POST' action='/add'>
+			<label for='txtShowName'>Show Name:</label><br />
+			<input id='txtShowName' type='text' />
+			<button id='btnAdd' type='submit'>Add</button><br />
+			<p><strong>TIP:</strong> Look up the show on <a href='http://torrentz.eu'>torrentz</a> first and get this as close as possible to avoid unexpected surprises. (Replace any punctuation with white space.)</p>
+		</form>
+		
+		{{> existing}}
+		
+		<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+		<script src='/js/index.js'></script>
+	</body>
+</html>
