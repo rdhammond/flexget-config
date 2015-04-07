@@ -8,14 +8,15 @@ class flexgetConfig
 
 	fetchConfig: ->
 		contents = fs.readFileSync @path
-		yaml.safeRead contents
+		yaml.safeLoad contents
 	
 	saveConfig: (config) ->
 		contents = yaml.safeDump config, {schema: yaml.FAILSAFE_SCHEMA}
 		Q.nfcall fs.writeFile, @path, contents
 	
 	getAll: ->
-		config = fetchConfig()
+		config = @fetchConfig()
+		
 		_.map config.tasks.download_tv.series, (v,k) -> k
 		
 	add: (name) ->
