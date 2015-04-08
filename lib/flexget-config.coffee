@@ -12,11 +12,11 @@ class flexgetConfig
 	
 	saveConfig: (config) ->
 		contents = yaml.safeDump config, {schema: yaml.FAILSAFE_SCHEMA}
-		Q.nfcall fs.writeFile, @path, contents
+		Q.nfcall fs.WriteFile, @path, contents
 	
-	newShow: (name, season, episode) ->
-		season = "0#{season}" if season < 10
-		episode = "0#{episode}" if episode < 10
+	newShow: (showInfo) ->
+		season = "0#{showInfo.season}" if showInfo.season < 10
+		episode = "0#{showInfo.episode}" if showInfo.episode < 10
 		
 		result =
 			begin: "S#{season}E#{episode}"
@@ -32,20 +32,19 @@ class flexgetConfig
 	
 	getAll: ->
 		config = @fetchConfig()
+		_.map config.tasks.download_tv.series, (v,k) -> {name: k}
 		
-		_.map config.tasks.download_tv.series, (v,k) -> k
-		
-	add: (name, season, episode) ->
+	add: (showInfo) ->
 		config = @fetchConfig()
 		
 		hasName = _.chain(config.tasks.download_tv.series)
 			.keys()
-			.has(name)
+			.has(newShow.name)
 			.value()
 			
 		return @emptyPromise() if hasName
 		
-		show = @newShow name, season, episode
+		show = @newShow showInfo
 		config.tasks.download_tv.series[name] = show
 		@saveConfig config
 		

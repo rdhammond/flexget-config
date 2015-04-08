@@ -14,7 +14,7 @@ writeInputFile = () ->
 					test2: {}
 					test3: {}
 	
-	contents = yaml.safeDump config
+	contents = yaml.safeDump config, {schema: yaml.FAILSAFE_SCHEMA}
 	fs.writeFileSync inputPath, contents
 
 getRawYaml = (path) ->
@@ -53,16 +53,22 @@ module.exports =
 		
 	getAllWorks: (test) ->
 		test.expect 4
-		names = this.config.getAll()
+		shows = this.config.getAll()
+		test.ok shows?
 		
-		test.ok names?
+		names = _.map shows, (x) -> x.name
 		testAllNames test, names, 3
-		
 		test.done()
 
 	addSingleDigitsWorks: (test) ->
-		test.expect 8		
-		addPromise = this.config.add 'test4', 1, 1
+		test.expect 8
+		
+		newShow =
+			name: 'test4'
+			season: 1
+			episode: 1
+		
+		addPromise = this.config.add newShow
 		
 		addPromise.then (err) ->
 			throw err if err?
@@ -71,7 +77,13 @@ module.exports =
 
 	addDoubleDigitsWorks: (test) ->
 		test.expect 8
-		addPromise = this.config.add 'test4', 10, 10
+		
+		newShow =
+			name: 'test4'
+			season: 10
+			episode: 10
+		
+		addPromise = this.config.add newShow
 		
 		addPromise.then (err) ->
 			throw err if err?
