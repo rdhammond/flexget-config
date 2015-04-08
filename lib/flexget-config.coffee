@@ -14,25 +14,45 @@ class flexgetConfig
 		contents = yaml.safeDump config, {schema: yaml.FAILSAFE_SCHEMA}
 		Q.nfcall fs.writeFile, @path, contents
 	
+	newShow: (name, season, episode) ->
+		season = "0#{season}" if season < 10
+		episode = "0#{episode}" if episode < 10
+		
+		result =
+			begin: "S#{season}E#{episode}"
+			qualities: [
+				'hdtv <720p !ac3 !dd5.1',
+				'sdtv'
+			]
+	
+	emptyPromise: () ->
+		deferred = Q.defer()
+		deferred.resolve()
+		deferred.promise
+	
 	getAll: ->
 		config = @fetchConfig()
 		
 		_.map config.tasks.download_tv.series, (v,k) -> k
 		
-	add: (name) ->
+	add: (name, season, episode) ->
 		config = @fetchConfig()
 		
-		if _.has config.tasks.download_tv.series, name
-			return
+		hasName = _.chain(config.tasks.download_tv.series)
+			.keys()
+			.has(name)
+			.value()
 			
-		config.tasks.download_tv.series[name] = newShow name
+		return @emptyPromise() if hasName
+		
+		show = @newShow name, season, episode
+		config.tasks.download_tv.series[name] = show
 		@saveConfig config
 		
 	delete: (id) ->
 		config = @fetchConfig()
-		
-		if not _.has config.tasks.download_tv.series, id
-			return
+		hasId = _.has config.tasks.download_tv.series, id
+		return @emptyPromise() if not hasId
 			
 		delete config.tasks.download_tv.series[id]
 		@saveConfig config
