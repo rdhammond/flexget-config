@@ -9,76 +9,73 @@
 	function errorAlert() {
 		window.alert('Something blew up. Go pester Daniel about it!');
 	}
-	
-	function validate() {
-		var data = {
-			name: $('#txtName').val(),
-			season: parseInt($('#txtSeason').val(), 10),
-			episode: parseInt($('#txtEpisode').val(), 10)
-		};
-		
-		if (
-			!data.name
-			|| isNaN(data.season)
-			|| data.season <= 0
-			|| isNaN(data.episode)
-			|| data.episode <= 0
-		)
-		{
-			$('#pInvalid').show();
-			return null;
-		}
-		
-		$('#pInvalid').hide();
-		return data;
+
+	function extractForm() {
+        var form = $('#frmAdd')[0];
+
+        return {
+            name: form.showName.value,
+            season: form.season.value,
+            episode: form.episode.value
+        };
+	}
+
+	function validate(data) {
+		return data.name && data.episode > 0 && data.season > 0;
 	}
 	
 	function addShow() {
-		var data = validateData();
-		if (!data) return false;
+		var data = extractForm();
+		
+		if (!validate(data)) {
+      $('#pInvalid').show();
+      return false;
+		}
 		
 		$('#pInvalid').hide();
 		
 		$.ajax({
 			data: data,
 			method: 'POST',
-			url: actions.add
+			url: actions.add,
 		})
-		
-		.success(function(data) {
-			$('#tblShows').append(data);
+		.done(function(data) {
+			var frmAdd = $('#frmAdd')[0];
+			frmAdd.showName.value = '';
+			frmAdd.season.value = '';
+			frmAdd.episode.value = '';
+			$('#txtShowName').focus();
+			
+			if (!data) return;
+			$('#tblShows>tbody').append($(data));
 		})
-		
-		.error(function() {
-			errorAlert();
-		});
+		.error(function() { errorAlert(); });
 		
 		// Make sure we don't go through with the postback!
 		return false;
 	}
 	
 	function deleteShow() {
-		var $tr = $(this).parent('tr');
-		var id = $tr.data('id');
+    var $tr = $(this).closest('tr');
+		var name = $tr.data('name');
+	
+		if (!window.confirm('Are you sure you want to delete ' + name + '?')) {
+      return;
+    }
 		
 		$.ajax({
-			data: {'id': id},
+			data: {name: name},
 			method: 'POST',
 			url: actions.delete
 		})
-		
-		.success(function() {
-			$tr.remove();
-		})
-		
-		.error(function() {
-			errorAlert();
-		});
+		.done(function() { $tr.remove(); })
+		.error(function() { errorAlert(); });
 	}
 	
 	$(function() {
-		$('#btnAdd').submit(addShow);
-		$('#btnDelete').click(deleteShow);
+		$('#frmAdd').submit(addShow);
+		$('#tblShows').on('click', '.btnDelete', deleteShow);
+		$('#txtShowName').focus();
 	});
 	
 })(jQuery);

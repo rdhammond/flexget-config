@@ -1,15 +1,21 @@
 express = require 'express'
-hbs = require 'express-handlebars'
-config = require './config'
-routes = require './routes'
+handlebars = require 'express-handlebars'
+settings = require './settings'
+router = require './lib/router'
+
+hbsEngine = handlebars
+	extname: 'hbs'
+	partialsDir: 'views/partials/'
+
+html = express.static "#{__dirname}/public"
 
 app = express()
+app.engine 'hbs', hbsEngine
 app.set 'view engine', 'hbs'
-app.use express.static('public')
+app.use html
+router(app)
 
-routes(app)
-
-server = app.listen config.appPort, () ->
-	host = server.address().address
-	port = server.address().port
-	console.log "Example app listening at http://#{host}:#{port}"
+server = app.listen settings.appPort, () ->
+  host = server.address().address;
+  port = server.address().port;	
+  console.log "Example app listening at http://#{host}:#{port}"

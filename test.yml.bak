@@ -1,0 +1,56 @@
+tasks:
+  download_tv:
+    exists_series: '/var/public/tv/{{series_name}}'
+    series:
+      - Arrow:
+          begin: S03E19
+          qualities:
+            - hdtv <720p !ac3 !dd5.1
+      - The Flash 2014:
+          begin: S01E17
+          qualities:
+            - hdtv <720p !ac3 !dd5.1
+      - Marvels Agents of S H I E L D:
+          begin: S02E04
+          qualities:
+            - hdtv <720p !ac3 !dd5.1
+      - Doctor Who 2005:
+          begin: S08E12
+          qualities:
+            - hdtv <720p !ac3 !dd5.1
+      - Outlander:
+          begin: S01E10
+          qualities:
+            - hdtv <720p !ac3 !dd5.1
+      - When Calls the Heart:
+          begin: S01E13
+          qualities:
+            - hdtv <720p !ac3 !dd5.1
+      - Sleepy Hollow:
+          begin: S01E14
+          qualities:
+            - hdtv <720p !ac3 !dd5.1
+      - Almost Royal:
+          begin: S01E02
+          qualities:
+            - hdtv <720p !ac3 !dd5.1
+    set:
+      path: '/var/public/tv/{{series_name}}'
+      main_file_only: yes
+      rename_like_files: yes
+      skip_files:
+        - '*.nfo'
+        - '*.sfv'
+        - '*[sS]ample*'
+        - '*.txt'
+        - '*.jpg'
+      include_subs: no
+    transmission: yes
+    clean_transmission:
+      transmission_seed_limits: yes
+    discover:
+      what:
+        - emit_series: yes
+      from:
+        - torrentz: verified
+      interval: 4 hours

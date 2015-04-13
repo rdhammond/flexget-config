@@ -8,15 +8,15 @@
 	<body>
 		<form id='frmAdd' method='POST' action='/add'>
 			<label for='txtShowName'><strong>Show Name:</strong></label>
-			<input id='txtShowName' type='text' /><br /><br />
+			<input id='txtShowName' name='showName' type='text' /><br /><br />
 			<p><strong>Start from</strong></p>
 			<label for='txtSeason'>Season:</label>
-			<input id='txtSeason' type='text' maxlength='2' />
+			<input id='txtSeason' name='season' type='text' maxlength='2' />
 			<label for='txtEpisode'>Episode:</label>
-			<input id='txtEpisode' type='text' maxlength='2' /><br /><br />
+			<input id='txtEpisode' name='episode' type='text' maxlength='2' /><br /><br />
 			<button id='btnAdd' type='submit'>Add</button><br />
-			<p><strong>TIP:</strong> Look up the show on <a href='http://torrentz.eu'>torrentz</a> first and get the name as close as possible to avoid unexpected surprises. (Replace any punctuation with white space.)</p>
-			<p id='pInvalid'>One or more values are missing or invalid.</p>
+			<p><strong>TIP:</strong> Look up the show on <a href='http://torrentz.eu' target='_blank'>torrentz</a> first and get the name as close as possible to avoid unexpected surprises. (Replace any punctuation with white space.)</p>
+			<p id='pInvalid' style='display: none;'>One or more values are missing or invalid.</p>
 		</form>
 		
 		{{> existing}}
