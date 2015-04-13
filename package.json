@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "coffee index.coffee"
   },
+  "homepage": "http://github.com/rdhammond/flexget-config.git",
   "author": "R. Daniel Hammond",
   "license": "MIT",
   "dependencies": {
