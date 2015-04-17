@@ -1,14 +1,12 @@
 Yaml = require 'js-yaml'
-Q = require 'q'
 Fs = require 'fs'
+Q = require 'q'
 
-
-module.exports = {
+module.exports =
   load: (path) ->
-    contents = Fs.readFileSync path
-    Yaml.safeLoad contents
+    promise = Q.nfcall Fs.readFile, path
+    promise.then (contents) -> Yaml.safeLoad contents
     
   save: (path, yaml) ->
-    contents = Yaml.safeDump yaml, {schema: Yaml.FAILSAFE_SCHEMA}
-    Fs.writeFileSync path, contents
-};
+    contents = Yaml.safeDump yaml
+    Q.nfcall Fs.writeFile, path, contents

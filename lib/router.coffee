@@ -1,7 +1,8 @@
-settings = require '../settings'
-flexgetConfig = require './flexget-config'
+Settings = require '../settings'
 _ = require 'underscore'
 BodyParser = require 'body-parser'
+FlexgetConfig = require './flexget-config'
+Q = require 'q'
 
 toShow = (series) ->
   name = _.keys(series)[0]
@@ -22,9 +23,9 @@ toSeries = (show) ->
   
   series[show.name] =
     begin: "S#{season}E#{episode}",
+    upgrade: yes
     qualities: [
       'hdtv <720p !ac3 !dd5.1',
-      'hdtv 720p !ac3 !dd5.1',
       'sdtv'
     ]
 
@@ -39,33 +40,47 @@ parser = BodyParser.urlencoded {extended:no}
 
 module.exports = (app) ->
   app.get '/', (req, res) ->
-    config = flexgetConfig.load settings.yamlPath
-    shows = _.map config.tasks.download_tv.series, (x) -> toShow x
-    res.render 'index', {shows: shows}
-    
+    promise = FlexgetConfig.load Settings.yamlPath
+
+    promise = promise.then (config) ->
+        shows = _.map config.tasks.download_tv.series, (x) -> toShow x
+        res.render 'index', {shows: shows}
+
+    promise = promise.catch (err) -> res.sendStatus 500
+    promise.done()
+
   app.post '/add', parser, (req, res) ->
     return res.sendStatus 500 if not validate req.body
     req.body = _.pick req.body, 'name', 'season', 'episode'
-    
-    config = flexgetConfig.load settings.yamlPath
-    series = config.tasks.download_tv.series
-    hasSeries = _.find series, (x) -> _.keys(x)[0] is req.body.name
-    return res.send null if hasSeries
-    
-    newSeries = toSeries req.body
-    config.tasks.download_tv.series.push newSeries
-    flexgetConfig.save settings.yamlPath, config
-    
-    res.render 'partials/show', req.body
+    promise = FlexgetConfig.load Settings.yamlPath
+
+    promise = promise.then (config) ->
+        series = config.tasks.download_tv.series
+        hasSeries = _.find series, (x) -> _.keys(x)[0] is req.body.name
+        return res.send null if hasSeries
+
+        newSeries = toSeries req.body
+        config.tasks.download_tv.series.push newSeries
+        FlexgetConfig.save Settings.yamlPath, config
+
+    promise = promise.then () -> res.render 'partials/show', req.body
+    promise = promise.catch (err) -> res.sendStatus 500
+    promise.done()
     
   app.post '/delete', parser, (req, res) ->
     return res.sendStatus 500 if not req.body.name
-    
-    config = flexgetConfig.load settings.yamlPath
-    series = config.tasks.download_tv.series
-    target = _.find series, (x) -> _.keys(x)[0] is req.body.name
-    return res.sendStatus 200 if not target?
-    
-    config.tasks.download_tv.series = _.without series, target
-    flexgetConfig.save settings.yamlPath, config
-    res.sendStatus 200
+    promise = FlexgetConfig.load Settings.yamlPath
+
+    promise = promise.then (config) ->
+        series = config.tasks.download_tv.series
+        target = _.find series, (x) -> _.keys(x)[0] is req.body.name
+        return res.sendStatus 200 if not target?
+
+        config.tasks.download_tv.series = _.without series, target
+        FlexgetConfig.save Settings.yamlPath, config
+
+    promise = promise.then () -> res.sendStatus 200
+    promise = promise.catch (err) ->
+        console.log err
+        res.sendStatus 500
+    promise.done()

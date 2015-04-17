@@ -5,7 +5,8 @@ router = require './lib/router'
 
 hbsEngine = handlebars
 	extname: 'hbs'
-	partialsDir: 'views/partials/'
+	viewsDir: "#{__dirname}/views"
+	partialsDir: "#{__dirname}/views/partials/"
 
 html = express.static "#{__dirname}/public"
 
@@ -16,6 +17,9 @@ app.use html
 router(app)
 
 server = app.listen settings.appPort, () ->
-  host = server.address().address;
-  port = server.address().port;	
+  host = server.address().address
+  port = server.address().port
   console.log "Example app listening at http://#{host}:#{port}"
+
+# ** HACK: Need this to prevent coffeescript from blowing up forever-daemon.
+undefined

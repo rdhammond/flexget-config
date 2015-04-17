@@ -1,3 +1,3 @@
 module.exports =
-  yamlPath: './test.yml'
+  yamlPath: '/home/delirium/.flexget/config.yml'
   appPort: 8081

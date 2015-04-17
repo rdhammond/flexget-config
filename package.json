@@ -15,6 +15,7 @@
     "express-handlebars": "^2.0.0",
     "js-yaml": "^3.2.7",
     "q": "^1.2.0",
+    "step": "0.0.5",
     "underscore": "^1.8.3"
   }
 }

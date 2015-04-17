@@ -36,21 +36,21 @@ tasks:
             - hdtv <720p !ac3 !dd5.1
     set:
       path: '/var/public/tv/{{series_name}}'
-      main_file_only: yes
-      rename_like_files: yes
+      main_file_only: true
+      rename_like_files: true
       skip_files:
         - '*.nfo'
         - '*.sfv'
         - '*[sS]ample*'
         - '*.txt'
         - '*.jpg'
-      include_subs: no
-    transmission: yes
+      include_subs: false
+    transmission: true
     clean_transmission:
-      transmission_seed_limits: yes
+      transmission_seed_limits: true
     discover:
       what:
-        - emit_series: yes
+        - emit_series: true
       from:
         - torrentz: verified
       interval: 4 hours
